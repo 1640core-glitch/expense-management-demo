@@ -128,6 +128,31 @@ describe('経費 CRUD と承認', () => {
       .set('Authorization', `Bearer ${approverToken}`);
     expect(r.status).toBe(404);
   });
+
+  test('audit-logs に create/submit/approve が記録される', async () => {
+    const c = await request(app).post('/api/expenses')
+      .set('Authorization', `Bearer ${empToken}`)
+      .send({ category_id: 1, title: '監査テスト', amount: 1234, expense_date: '2024-05-25' });
+    expect(c.status).toBe(201);
+    const id = c.body.id;
+    await request(app).post(`/api/expenses/${id}/submit`)
+      .set('Authorization', `Bearer ${empToken}`);
+    await request(app).post(`/api/expenses/${id}/approve`)
+      .set('Authorization', `Bearer ${approverToken}`)
+      .send({ comment: 'OK' });
+    const r = await request(app).get(`/api/expenses/${id}/audit-logs`)
+      .set('Authorization', `Bearer ${empToken}`);
+    expect(r.status).toBe(200);
+    expect(Array.isArray(r.body.logs)).toBe(true);
+    expect(r.body.logs.length).toBeGreaterThanOrEqual(3);
+    const actions = r.body.logs.map(l => l.action);
+    expect(actions).toContain('create');
+    expect(actions).toContain('submit');
+    expect(actions).toContain('approve');
+    for (const log of r.body.logs) {
+      expect(log.actorName).toBeTruthy();
+    }
+  });
 });
 
 describe('レポート集計', () => {

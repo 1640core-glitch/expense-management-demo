@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const { authRequired, requireRole } = require('../middleware/auth');
+const { recordAudit } = require('../middleware/audit');
 
 const router = express.Router({ mergeParams: true });
 
@@ -22,6 +23,7 @@ function act(action, finalStatus) {
       db.prepare(
         "UPDATE expenses SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
       ).run(finalStatus, id);
+      recordAudit({ expenseId: id, actorId: req.user.id, action, fromStatus: 'pending', toStatus: finalStatus, comment });
     });
     tx();
     const updated = db.prepare('SELECT * FROM expenses WHERE id = ?').get(id);

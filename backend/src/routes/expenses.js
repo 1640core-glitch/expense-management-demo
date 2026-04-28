@@ -4,6 +4,7 @@ const fs = require('fs');
 const multer = require('multer');
 const db = require('../db');
 const { authRequired } = require('../middleware/auth');
+const { recordAudit, listAudit } = require('../middleware/audit');
 
 const router = express.Router();
 
@@ -100,6 +101,7 @@ router.post('/', handleUpload('receipt'), (req, res) => {
      VALUES (?, ?, ?, ?, ?, ?, ?, 'draft')`
   ).run(req.user.id, Number(category_id), title || null, Number(amount), expense_date, description || null, receipt_path);
   const row = db.prepare('SELECT * FROM expenses WHERE id = ?').get(result.lastInsertRowid);
+  recordAudit({ expenseId: row.id, actorId: req.user.id, action: 'create', fromStatus: null, toStatus: 'draft' });
   res.status(201).json(row);
 });
 
@@ -146,6 +148,7 @@ router.patch('/:id', handleUpload('receipt'), (req, res) => {
   params.push(row.id);
   db.prepare(`UPDATE expenses SET ${updates.join(', ')} WHERE id = ?`).run(...params);
   const updated = db.prepare('SELECT * FROM expenses WHERE id = ?').get(row.id);
+  recordAudit({ expenseId: row.id, actorId: req.user.id, action: 'update', fromStatus: 'draft', toStatus: 'draft' });
   res.json(updated);
 });
 
@@ -156,6 +159,7 @@ router.delete('/:id', (req, res) => {
     return res.status(400).json({ error: '下書きのみ削除可能です' });
   }
   db.prepare('DELETE FROM expenses WHERE id = ?').run(row.id);
+  recordAudit({ expenseId: row.id, actorId: req.user.id, action: 'withdraw', fromStatus: 'draft', toStatus: null });
   res.json({ message: '削除しました' });
 });
 
@@ -167,7 +171,24 @@ router.post('/:id/submit', (req, res) => {
   }
   db.prepare("UPDATE expenses SET status = 'pending', submitted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(row.id);
   const updated = db.prepare('SELECT * FROM expenses WHERE id = ?').get(row.id);
+  recordAudit({ expenseId: row.id, actorId: req.user.id, action: 'submit', fromStatus: 'draft', toStatus: 'pending' });
   res.json(updated);
+});
+
+router.get('/:id/audit-logs', (req, res) => {
+  const row = getOwnedExpense(req, res);
+  if (!row) return;
+  const logs = listAudit(row.id).map((l) => ({
+    id: l.id,
+    action: l.action,
+    actorId: l.actor_id,
+    actorName: l.actor_name,
+    from: l.from_status,
+    to: l.to_status,
+    comment: l.comment,
+    createdAt: l.created_at,
+  }));
+  res.json({ logs });
 });
 
 router.get('/:id/receipt', (req, res) => {
