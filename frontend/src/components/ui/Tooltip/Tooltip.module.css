@@ -1,0 +1,16 @@
+.content {
+  background-color: var(--color-text);
+  color: var(--color-bg);
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+  user-select: none;
+  z-index: 70;
+  max-width: 240px;
+}
+
+.arrow {
+  fill: var(--color-text);
+}

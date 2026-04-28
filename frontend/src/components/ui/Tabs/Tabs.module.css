@@ -1,0 +1,55 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-family: var(--font-sans);
+}
+
+.list {
+  display: inline-flex;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.trigger {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 8px 14px;
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color .15s ease, border-color .15s ease;
+}
+
+.trigger:hover {
+  color: var(--color-text);
+}
+
+.trigger[data-state='active'] {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.trigger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+  border-radius: var(--radius-sm);
+}
+
+.trigger:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+.content {
+  padding: var(--space-3) 0;
+}
+
+.content:focus-visible {
+  outline: none;
+}
