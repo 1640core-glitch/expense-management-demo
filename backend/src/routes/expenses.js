@@ -48,12 +48,41 @@ const handleUpload = (field) => (req, res, next) => {
 router.use(authRequired);
 
 router.get('/', (req, res) => {
-  const { status } = req.query;
-  let sql = 'SELECT * FROM expenses WHERE user_id = ?';
-  const params = [req.user.id];
-  if (status) {
-    sql += ' AND status = ?';
-    params.push(status);
+  const { status, category_id, user_id, from, to } = req.query;
+  const conditions = [];
+  const params = [];
+  if (req.user.role === 'approver' || req.user.role === 'admin') {
+    if (status) {
+      conditions.push('status = ?');
+      params.push(status);
+    }
+    if (category_id) {
+      conditions.push('category_id = ?');
+      params.push(Number(category_id));
+    }
+    if (user_id) {
+      conditions.push('user_id = ?');
+      params.push(Number(user_id));
+    }
+    if (from) {
+      conditions.push('expense_date >= ?');
+      params.push(from);
+    }
+    if (to) {
+      conditions.push('expense_date <= ?');
+      params.push(to);
+    }
+  } else {
+    conditions.push('user_id = ?');
+    params.push(req.user.id);
+    if (status) {
+      conditions.push('status = ?');
+      params.push(status);
+    }
+  }
+  let sql = 'SELECT * FROM expenses';
+  if (conditions.length > 0) {
+    sql += ' WHERE ' + conditions.join(' AND ');
   }
   sql += ' ORDER BY created_at DESC';
   const rows = db.prepare(sql).all(...params);
