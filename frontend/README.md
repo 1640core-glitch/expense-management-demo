@@ -84,6 +84,53 @@ Tailwind ブレークポイント:
 | `< 1024px` | Sidebar を Drawer 化。Topbar の `Menu` ボタンで開閉。ルート遷移時に自動 close |
 | `< 640px` | Topbar の検索 Input を非表示。`main` を 1 カラム |
 
+## pages/ 一覧
+
+`src/pages/` 配下の画面コンポーネント。サブディレクトリは関連画面でグルーピング。
+
+| ファイル / パス | 画面 |
+|---|---|
+| `LoginPage.tsx` | `/login` ログイン |
+| `RegisterPage.tsx` | `/register` 新規登録 |
+| `HomePage.tsx` | `/` ホーム |
+| `MyExpensesPage.tsx` | `/expenses` 自分の申請一覧 |
+| `ExpenseFormPage.tsx` | `/expenses/new`, `/expenses/:id/edit` 申請フォーム |
+| `ExpenseDetailPage.tsx` | `/expenses/:id` 申請詳細 |
+| `DashboardPage.tsx` | `/dashboard` 月次集計 |
+| `NotificationsPage.tsx` | `/notifications` 通知一覧 |
+| `MonthlyPdfPage.tsx` | `/exports/monthly` 月次 PDF 出力 |
+| `AdminExpensesPage.tsx` | `/admin/expenses` 全申請管理 (admin) |
+| `admin/AdminUsersPage.tsx` | `/admin/users` ユーザー管理 (admin) |
+| `admin/AdminCategoriesPage.tsx` | `/admin/categories` カテゴリ管理 (admin) |
+| `admin/AdminImportPage.tsx` | `/admin/import` CSV インポート (admin) |
+| `admin/components/` | admin 系画面で共有するサブコンポーネント |
+| `approvals/ApprovalsListPage.tsx` | `/approvals` 承認待ち一覧 (approver/admin) |
+| `approvals/ApprovalDetailDialog.tsx` | 承認詳細ダイアログ |
+| `approvals/approvalSchema.ts` | 承認フォームスキーマ |
+| `templates/TemplatesListPage.tsx` | `/templates` テンプレート一覧 |
+| `templates/TemplateFormPage.tsx` | `/templates/new`, `/templates/:id/edit` 作成・編集 |
+| `templates/TemplateForm.tsx` | テンプレートフォーム本体 |
+
+## API クライアント (`src/api/`)
+
+axios ラッパ (`client.ts`) を経由してバックエンドの REST API を呼び出すクライアント群。
+
+| ファイル | 対応エンドポイント |
+|---|---|
+| `client.ts` | axios インスタンス (JWT 付与・401 ハンドリング) |
+| `errors.ts` | API エラー型・整形ユーティリティ |
+| `auth.ts` | `POST /api/auth/login`, `POST /api/auth/register`, `GET /api/auth/me` |
+| `expenses.ts` | `/api/expenses` 一覧・詳細・作成・更新・削除・提出 |
+| `attachments.ts` | `/api/expenses/:id/attachments` 添付アップロード・取得・削除 |
+| `approvals.ts` | `/api/expenses/:id/approve`, `/api/expenses/:id/reject` 承認・差戻し |
+| `templates.ts` | `/api/templates` テンプレート CRUD |
+| `notifications.ts` | `/api/notifications` 一覧・既読化 |
+| `exports.ts` | `/api/exports` 月次 PDF / CSV エクスポート |
+| `import.ts` | `/api/admin/import` CSV インポート |
+| `admin.ts` | `/api/admin/months-closed` 月次締め参照・更新 |
+| `adminCategories.ts` | `/api/admin/categories` カテゴリ管理 |
+| `adminUsers.ts` | `/api/admin/users` ユーザー管理 |
+
 ## ルーティング規約
 
 `src/App.tsx` で `<Route element={<AppLayout />}>` 配下に認可ルートを配置。
