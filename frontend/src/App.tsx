@@ -4,7 +4,7 @@ import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
 import ExpenseFormPage from './pages/ExpenseFormPage';
 import MyExpensesPage from './pages/MyExpensesPage';
-import PendingApprovalsPage from './pages/PendingApprovalsPage';
+import ApprovalsListPage from './pages/approvals/ApprovalsListPage';
 import AdminExpensesPage from './pages/AdminExpensesPage';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -52,7 +52,7 @@ export default function App() {
           path="/approvals"
           element={
             <ProtectedRoute roles={['approver', 'admin']}>
-              <PendingApprovalsPage />
+              <ApprovalsListPage />
             </ProtectedRoute>
           }
         />
