@@ -6,6 +6,9 @@ const path = require('path');
 
 const db = require('./db');
 const authRoutes = require('./routes/auth');
+const expensesRoutes = require('./routes/expenses');
+const usersRoutes = require('./routes/users');
+const categoriesRoutes = require('./routes/categories');
 
 // Auto-init schema if tables missing
 const schema = fs.readFileSync(path.join(__dirname, 'db/schema.sql'), 'utf8');
@@ -20,6 +23,9 @@ app.use(express.json());
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.use('/api/auth', authRoutes);
+app.use('/api/expenses', expensesRoutes);
+app.use('/api/admin/users', usersRoutes);
+app.use('/api/categories', categoriesRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);

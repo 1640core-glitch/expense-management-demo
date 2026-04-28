@@ -18,4 +18,14 @@ function signToken(payload) {
   return jwt.sign(payload, SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '7d' });
 }
 
-module.exports = { authRequired, signToken };
+function requireRole(...roles) {
+  return (req, res, next) => {
+    if (!req.user) return res.status(401).json({ error: '認証が必要です' });
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ error: '権限がありません' });
+    }
+    next();
+  };
+}
+
+module.exports = { authRequired, signToken, requireRole };
