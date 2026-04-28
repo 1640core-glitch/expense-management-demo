@@ -34,6 +34,25 @@ export async function listAllExpenses(q: AdminExpenseQuery = {}): Promise<Expens
   return res.data;
 }
 
+export interface SummaryCategory {
+  categoryId: number;
+  categoryName: string;
+  total: number;
+}
+
+export interface Summary {
+  total: number;
+  byCategory: SummaryCategory[];
+}
+
+export async function getSummary(yearMonth: string): Promise<Summary> {
+  const res = await client.get<{ total: number; byCategory: SummaryCategory[] }>(
+    '/reports/summary',
+    { params: { yearMonth } },
+  );
+  return { total: res.data.total, byCategory: res.data.byCategory };
+}
+
 export async function getMonthlyReport(year: number, month: number): Promise<MonthlyReport> {
   const res = await client.get<MonthlyReport>('/reports/monthly', { params: { year, month } });
   return res.data;
