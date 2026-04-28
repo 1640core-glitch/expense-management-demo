@@ -10,6 +10,7 @@ import {
   updateExpense,
   getReceiptBlob,
 } from '../api/expenses';
+import { Template, listTemplates } from '../api/templates';
 
 interface FieldErrors {
   category_id?: string;
@@ -24,6 +25,8 @@ export default function ExpenseFormPage() {
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState<Category[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
   const [expenseId, setExpenseId] = useState<number | null>(null);
   const [status, setStatus] = useState<string>('draft');
   const [expenseDate, setExpenseDate] = useState<string>('');
@@ -48,6 +51,13 @@ export default function ExpenseFormPage() {
         const cats = await listCategories();
         if (cancelled) return;
         setCategories(cats);
+        try {
+          const tpls = await listTemplates();
+          if (cancelled) return;
+          setTemplates(tpls);
+        } catch (err: unknown) {
+          console.error('テンプレート一覧の取得に失敗しました', err);
+        }
         if (isEdit && id) {
           const exp = await getExpense(Number(id));
           if (cancelled) return;
@@ -97,6 +107,17 @@ export default function ExpenseFormPage() {
       if (receiptBlobUrl) URL.revokeObjectURL(receiptBlobUrl);
     };
   }, [receiptBlobUrl]);
+
+  const applyTemplate = (templateId: string) => {
+    setSelectedTemplateId(templateId);
+    if (!templateId) return;
+    const t = templates.find((tpl) => String(tpl.id) === templateId);
+    if (!t) return;
+    setCategoryId(String(t.category_id));
+    if (t.amount != null) setAmount(String(t.amount));
+    if (t.title) setTitle(t.title);
+    if (t.description) setDescription(t.description);
+  };
 
   const validate = (): FieldErrors => {
     const errs: FieldErrors = {};
@@ -189,6 +210,23 @@ export default function ExpenseFormPage() {
       <h1>{isEdit ? '経費申請の編集' : '経費を申請する'}</h1>
       {error && <div className="error">{error}</div>}
       <form onSubmit={handleSaveDraft}>
+        {!readOnly && templates.length > 0 && (
+          <>
+            <label>テンプレートから入力</label>
+            <select
+              value={selectedTemplateId}
+              onChange={(e) => applyTemplate(e.target.value)}
+              disabled={readOnly}
+              style={{ width: '100%', padding: '8px 10px', marginBottom: 12, border: '1px solid #ccc', borderRadius: 4, fontSize: 14 }}
+            >
+              <option value="">選択してください</option>
+              {templates.map((t) => (
+                <option key={t.id} value={t.id}>{t.name}</option>
+              ))}
+            </select>
+          </>
+        )}
+
         <label>申請日<span style={{ color: '#b91c1c' }}> *</span></label>
         <input
           type="date"
