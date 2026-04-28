@@ -6,14 +6,14 @@ const { authRequired, signToken } = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/register', (req, res) => {
-  const { email, password, name, role } = req.body || {};
+  const { email, password, name } = req.body || {};
   if (!email || !password || !name) {
     return res.status(400).json({ error: 'email, password, name は必須です' });
   }
   const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
   if (existing) return res.status(409).json({ error: 'このメールアドレスは既に登録されています' });
   const hash = bcrypt.hashSync(password, 10);
-  const userRole = ['employee', 'approver', 'admin'].includes(role) ? role : 'employee';
+  const userRole = 'employee';
   const result = db.prepare(
     'INSERT INTO users (email, password_hash, name, role) VALUES (?, ?, ?, ?)'
   ).run(email, hash, name, userRole);
