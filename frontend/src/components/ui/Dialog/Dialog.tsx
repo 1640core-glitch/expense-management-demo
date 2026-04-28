@@ -23,7 +23,7 @@ export const DialogClose = DialogPrimitive.Close;
 export const DialogPortal = DialogPrimitive.Portal;
 
 export interface DialogContentProps
-  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
+  extends Omit<React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>, 'title'> {
   title?: ReactNode;
   description?: ReactNode;
   showClose?: boolean;
