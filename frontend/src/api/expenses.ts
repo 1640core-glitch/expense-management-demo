@@ -82,6 +82,11 @@ export function receiptUrl(id: number): string {
   return `/api/expenses/${id}/receipt`;
 }
 
+export async function getReceiptBlob(id: number): Promise<Blob> {
+  const res = await client.get<Blob>(`/expenses/${id}/receipt`, { responseType: 'blob' });
+  return res.data;
+}
+
 export function statusLabel(status: ExpenseStatus): string {
   switch (status) {
     case 'draft': return '下書き';

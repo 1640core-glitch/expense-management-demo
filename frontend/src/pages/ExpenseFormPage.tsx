@@ -8,7 +8,7 @@ import {
   listCategories,
   submitExpense,
   updateExpense,
-  receiptUrl,
+  getReceiptBlob,
 } from '../api/expenses';
 
 interface FieldErrors {
@@ -33,6 +33,8 @@ export default function ExpenseFormPage() {
   const [description, setDescription] = useState<string>('');
   const [receipt, setReceipt] = useState<File | null>(null);
   const [existingReceipt, setExistingReceipt] = useState<string | null>(null);
+  const [receiptBlobUrl, setReceiptBlobUrl] = useState<string | null>(null);
+  const [receiptMime, setReceiptMime] = useState<string>('');
 
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +62,17 @@ export default function ExpenseFormPage() {
           setTitle(exp.title ?? '');
           setDescription(exp.description ?? '');
           setExistingReceipt(exp.receipt_path);
+          if (exp.receipt_path) {
+            try {
+              const blob = await getReceiptBlob(exp.id);
+              if (cancelled) return;
+              const url = URL.createObjectURL(blob);
+              setReceiptBlobUrl(url);
+              setReceiptMime(blob.type || '');
+            } catch (err: unknown) {
+              console.error('領収書の取得に失敗しました', err);
+            }
+          }
         } else {
           const today = new Date().toISOString().slice(0, 10);
           setExpenseDate(today);
@@ -78,6 +91,12 @@ export default function ExpenseFormPage() {
       cancelled = true;
     };
   }, [id, isEdit]);
+
+  useEffect(() => {
+    return () => {
+      if (receiptBlobUrl) URL.revokeObjectURL(receiptBlobUrl);
+    };
+  }, [receiptBlobUrl]);
 
   const validate = (): FieldErrors => {
     const errs: FieldErrors = {};
@@ -230,10 +249,20 @@ export default function ExpenseFormPage() {
           disabled={readOnly}
         />
         {existingReceipt && expenseId !== null && (
-          <p style={{ fontSize: 13, marginTop: -8, marginBottom: 12 }}>
-            現在の領収書: <a className="link" href={receiptUrl(expenseId)} target="_blank" rel="noreferrer">表示</a>
-            {!readOnly && '（新しいファイルを選択すると差し替えられます）'}
-          </p>
+          <div style={{ fontSize: 13, marginTop: -8, marginBottom: 12 }}>
+            <p style={{ margin: '0 0 6px' }}>
+              現在の領収書:
+              {receiptBlobUrl ? (
+                <> <a className="link" href={receiptBlobUrl} target="_blank" rel="noreferrer">別タブで開く</a></>
+              ) : (
+                <> 読み込み中...</>
+              )}
+              {!readOnly && '（新しいファイルを選択すると差し替えられます）'}
+            </p>
+            {receiptBlobUrl && receiptMime.startsWith('image/') && (
+              <img src={receiptBlobUrl} alt="領収書プレビュー" style={{ maxWidth: '100%', maxHeight: 320, border: '1px solid #ccc', borderRadius: 4 }} />
+            )}
+          </div>
         )}
 
         <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
