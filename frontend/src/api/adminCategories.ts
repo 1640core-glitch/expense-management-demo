@@ -6,6 +6,7 @@ export interface AdminCategory {
   description: string | null;
   monthlyLimit: number | null;
   isActive: boolean;
+  displayOrder: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -15,16 +16,18 @@ export interface AdminCategoryInput {
   description?: string | null;
   monthlyLimit?: number | null;
   isActive?: boolean;
+  displayOrder?: number | null;
 }
 
 interface AdminCategoryResponse {
   id: number;
   name: string;
   description: string | null;
-  monthly_limit: number | null;
-  is_active: number | boolean;
-  created_at?: string;
-  updated_at?: string;
+  monthlyLimit: number | null;
+  isActive: boolean;
+  displayOrder: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 function fromResponse(c: AdminCategoryResponse): AdminCategory {
@@ -32,10 +35,11 @@ function fromResponse(c: AdminCategoryResponse): AdminCategory {
     id: c.id,
     name: c.name,
     description: c.description,
-    monthlyLimit: c.monthly_limit,
-    isActive: !!c.is_active,
-    createdAt: c.created_at,
-    updatedAt: c.updated_at,
+    monthlyLimit: c.monthlyLimit,
+    isActive: c.isActive,
+    displayOrder: c.displayOrder,
+    createdAt: c.createdAt,
+    updatedAt: c.updatedAt,
   };
 }
 
@@ -47,15 +51,18 @@ function toRequest(input: AdminCategoryInput): Record<string, unknown> {
     body.description = input.description;
   }
   if (input.monthlyLimit !== undefined) {
-    body.monthly_limit = input.monthlyLimit;
+    body.monthlyLimit = input.monthlyLimit;
   }
   if (input.isActive !== undefined) {
-    body.is_active = input.isActive;
+    body.isActive = input.isActive;
+  }
+  if (input.displayOrder !== undefined && input.displayOrder !== null) {
+    body.displayOrder = input.displayOrder;
   }
   return body;
 }
 
-function unwrap(data: AdminCategoryResponse | { category: AdminCategoryResponse }): AdminCategoryResponse {
+function unwrapItem(data: AdminCategoryResponse | { category: AdminCategoryResponse }): AdminCategoryResponse {
   if (data && typeof data === 'object' && 'category' in data) {
     return (data as { category: AdminCategoryResponse }).category;
   }
@@ -63,8 +70,13 @@ function unwrap(data: AdminCategoryResponse | { category: AdminCategoryResponse 
 }
 
 export async function list(): Promise<AdminCategory[]> {
-  const res = await client.get<AdminCategoryResponse[]>('/admin/categories');
-  return res.data.map(fromResponse);
+  const res = await client.get<{ categories: AdminCategoryResponse[] } | AdminCategoryResponse[]>(
+    '/admin/categories',
+  );
+  const items = Array.isArray(res.data)
+    ? res.data
+    : res.data.categories;
+  return items.map(fromResponse);
 }
 
 export async function create(input: AdminCategoryInput): Promise<AdminCategory> {
@@ -72,7 +84,7 @@ export async function create(input: AdminCategoryInput): Promise<AdminCategory> 
     '/admin/categories',
     toRequest(input),
   );
-  return fromResponse(unwrap(res.data));
+  return fromResponse(unwrapItem(res.data));
 }
 
 export async function update(id: number, input: AdminCategoryInput): Promise<AdminCategory> {
@@ -80,7 +92,15 @@ export async function update(id: number, input: AdminCategoryInput): Promise<Adm
     `/admin/categories/${id}`,
     toRequest(input),
   );
-  return fromResponse(unwrap(res.data));
+  return fromResponse(unwrapItem(res.data));
+}
+
+export async function reorder(id: number, displayOrder: number): Promise<AdminCategory> {
+  const res = await client.patch<AdminCategoryResponse | { category: AdminCategoryResponse }>(
+    `/admin/categories/${id}`,
+    { displayOrder },
+  );
+  return fromResponse(unwrapItem(res.data));
 }
 
 export async function remove(id: number): Promise<void> {

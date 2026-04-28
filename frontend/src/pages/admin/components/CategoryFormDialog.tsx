@@ -19,6 +19,17 @@ const schema = z.object({
   description: z.string().max(500, '説明は500文字以内で入力してください').optional(),
   monthlyLimit: z.string().optional(),
   isActive: z.boolean(),
+  displayOrder: z
+    .string()
+    .optional()
+    .refine(
+      (v) => {
+        if (v === undefined || v.trim() === '') return true;
+        const n = Number(v);
+        return Number.isInteger(n) && n >= 0;
+      },
+      { message: '表示順は0以上の整数で入力してください' },
+    ),
 });
 
 type FormValues = {
@@ -26,6 +37,7 @@ type FormValues = {
   description?: string;
   monthlyLimit?: string;
   isActive: boolean;
+  displayOrder?: string;
 };
 
 interface Props {
@@ -50,6 +62,7 @@ export function CategoryFormDialog({ open, onOpenChange, initial, onSubmit }: Pr
       description: '',
       monthlyLimit: '',
       isActive: true,
+      displayOrder: '',
     },
   });
 
@@ -62,12 +75,14 @@ export function CategoryFormDialog({ open, onOpenChange, initial, onSubmit }: Pr
               description: initial.description ?? '',
               monthlyLimit: initial.monthlyLimit != null ? String(initial.monthlyLimit) : '',
               isActive: initial.isActive,
+              displayOrder: String(initial.displayOrder),
             }
           : {
               name: '',
               description: '',
               monthlyLimit: '',
               isActive: true,
+              displayOrder: '',
             },
       );
     }
@@ -84,11 +99,20 @@ export function CategoryFormDialog({ open, onOpenChange, initial, onSubmit }: Pr
     ) {
       return;
     }
+    const displayOrderRaw = values.displayOrder?.trim() ?? '';
+    const displayOrderNum = displayOrderRaw !== '' ? Number(displayOrderRaw) : null;
+    if (
+      displayOrderNum != null &&
+      (!Number.isInteger(displayOrderNum) || displayOrderNum < 0)
+    ) {
+      return;
+    }
     const input: AdminCategoryInput = {
       name: values.name.trim(),
       description: values.description?.trim() ? values.description.trim() : null,
       monthlyLimit: monthlyLimitNum,
       isActive: values.isActive,
+      ...(displayOrderNum != null ? { displayOrder: displayOrderNum } : {}),
     };
     try {
       await onSubmit(input);
@@ -135,6 +159,15 @@ export function CategoryFormDialog({ open, onOpenChange, initial, onSubmit }: Pr
             errorText={errors.monthlyLimit?.message}
             disabled={isSubmitting}
             {...register('monthlyLimit')}
+          />
+          <Input
+            label="表示順（任意・0以上の整数。新規作成時は自動採番）"
+            type="number"
+            min={0}
+            step={1}
+            errorText={errors.displayOrder?.message}
+            disabled={isSubmitting}
+            {...register('displayOrder')}
           />
           <Checkbox
             label="有効"
