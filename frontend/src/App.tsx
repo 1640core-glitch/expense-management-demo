@@ -14,6 +14,7 @@ import DashboardPage from './pages/DashboardPage';
 import NotificationsPage from './pages/NotificationsPage';
 import TemplatesListPage from './pages/templates/TemplatesListPage';
 import TemplateFormPage from './pages/templates/TemplateFormPage';
+import MonthlyPdfPage from './pages/MonthlyPdfPage';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { AppLayout } from './components/layout/AppLayout';
 
@@ -140,6 +141,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <TemplateFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/exports/monthly"
+          element={
+            <ProtectedRoute roles={['approver', 'admin', 'accounting']}>
+              <MonthlyPdfPage />
             </ProtectedRoute>
           }
         />

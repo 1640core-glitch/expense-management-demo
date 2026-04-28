@@ -9,7 +9,7 @@ import {
   LucideIcon,
 } from 'lucide-react';
 
-export type NavRole = 'employee' | 'approver' | 'admin';
+export type NavRole = 'employee' | 'approver' | 'admin' | 'accounting';
 
 export interface NavItem {
   to: string;
@@ -29,6 +29,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/admin/users', label: 'ユーザー管理', icon: Settings, roles: ['admin'] },
   { to: '/admin/categories', label: 'カテゴリ管理', icon: Settings, roles: ['admin'] },
   { to: '/admin/import', label: 'CSVインポート', icon: Upload, roles: ['admin'] },
+  { to: '/exports/monthly', label: '月次PDF', icon: FileText, roles: ['approver', 'admin', 'accounting'] },
 ];
 
 export function filterNavItemsByRole(role: NavRole | undefined): NavItem[] {
