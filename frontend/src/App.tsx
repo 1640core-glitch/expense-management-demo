@@ -9,6 +9,8 @@ import ApprovalsListPage from './pages/approvals/ApprovalsListPage';
 import AdminExpensesPage from './pages/AdminExpensesPage';
 import DashboardPage from './pages/DashboardPage';
 import NotificationsPage from './pages/NotificationsPage';
+import TemplatesListPage from './pages/templates/TemplatesListPage';
+import TemplateFormPage from './pages/templates/TemplateFormPage';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { AppLayout } from './components/layout/AppLayout';
 
@@ -87,6 +89,30 @@ export default function App() {
           element={
             <ProtectedRoute>
               <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/templates"
+          element={
+            <ProtectedRoute>
+              <TemplatesListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/templates/new"
+          element={
+            <ProtectedRoute>
+              <TemplateFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/templates/:id/edit"
+          element={
+            <ProtectedRoute>
+              <TemplateFormPage />
             </ProtectedRoute>
           }
         />

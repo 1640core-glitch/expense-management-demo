@@ -4,6 +4,7 @@ import {
   ClipboardCheck,
   LayoutDashboard,
   Settings,
+  FileText,
   LucideIcon,
 } from 'lucide-react';
 
@@ -20,6 +21,7 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { to: '/expenses/new', label: '経費を申請', icon: FilePlus, roles: ['employee', 'approver', 'admin'] },
   { to: '/expenses', label: '自分の申請', icon: ListChecks, roles: ['employee', 'approver', 'admin'] },
+  { to: '/templates', label: 'テンプレート', icon: FileText, roles: ['employee', 'approver', 'admin'] },
   { to: '/approvals', label: '承認待ち', icon: ClipboardCheck, roles: ['approver', 'admin'], badgeKey: 'pendingApprovals' },
   { to: '/dashboard', label: 'ダッシュボード', icon: LayoutDashboard, roles: ['approver', 'admin'] },
   { to: '/admin/expenses', label: '経費申請管理', icon: Settings, roles: ['admin'] },
