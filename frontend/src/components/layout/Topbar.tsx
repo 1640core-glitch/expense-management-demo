@@ -1,3 +1,4 @@
+import { Ref } from 'react';
 import { Bell, Menu, Moon, Search, Sun, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -18,9 +19,10 @@ import { useAuth } from '../../context/AuthContext';
 export interface TopbarProps {
   onOpenDrawer: () => void;
   notificationCount?: number;
+  searchInputRef?: Ref<HTMLInputElement>;
 }
 
-export function Topbar({ onOpenDrawer, notificationCount = 0 }: TopbarProps) {
+export function Topbar({ onOpenDrawer, notificationCount = 0, searchInputRef }: TopbarProps) {
   const { resolved, toggle } = useTheme();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -44,6 +46,7 @@ export function Topbar({ onOpenDrawer, notificationCount = 0 }: TopbarProps) {
       <div className="hidden sm:flex items-center flex-1 max-w-md relative">
         <Search size={16} className="absolute left-3 text-text-muted pointer-events-none" aria-hidden="true" />
         <Input
+          ref={searchInputRef}
           type="search"
           placeholder="検索..."
           className="pl-9"

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
@@ -8,6 +8,8 @@ import { listPendingApprovals } from '../../api/approvals';
 import { listNotifications } from '../../api/notifications';
 import { NavRole } from './nav-items';
 import { ErrorBoundary } from '../ErrorBoundary';
+import { useShortcuts } from '../../lib/shortcuts';
+import type { ShortcutRole } from '../../lib/shortcuts';
 
 const NOTIFICATION_POLL_INTERVAL_MS = 60_000;
 
@@ -18,6 +20,9 @@ export function AppLayout() {
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const location = useLocation();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useShortcuts({ role: role as ShortcutRole | undefined, searchInputRef });
 
   useEffect(() => {
     if (role !== 'approver' && role !== 'admin') {
@@ -117,7 +122,11 @@ export function AppLayout() {
       )}
 
       <div className="flex flex-col min-w-0">
-        <Topbar onOpenDrawer={() => setDrawerOpen(true)} notificationCount={unreadCount} />
+        <Topbar
+          onOpenDrawer={() => setDrawerOpen(true)}
+          notificationCount={unreadCount}
+          searchInputRef={searchInputRef}
+        />
         <main className="flex-1 p-4 sm:p-6">
           <ErrorBoundary>
             <Outlet />
