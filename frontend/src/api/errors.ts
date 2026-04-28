@@ -5,6 +5,7 @@ export class ApiError extends Error {
   status: number;
   code?: string;
   details?: unknown;
+  silent: boolean;
   raw: AxiosError;
 
   constructor(params: {
@@ -12,12 +13,14 @@ export class ApiError extends Error {
     message: string;
     code?: string;
     details?: unknown;
+    silent?: boolean;
     raw: AxiosError;
   }) {
     super(params.message);
     this.status = params.status;
     this.code = params.code;
     this.details = params.details;
+    this.silent = params.silent ?? false;
     this.raw = params.raw;
   }
 }
@@ -56,6 +59,14 @@ export function normalizeError(error: AxiosError): ApiError {
       message,
       code,
       details: data?.details,
+      raw: error,
+    });
+  }
+  if (error.code === 'ERR_CANCELED') {
+    return new ApiError({
+      status: 0,
+      message: defaultMessage(0),
+      silent: true,
       raw: error,
     });
   }

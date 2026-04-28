@@ -31,6 +31,9 @@ export function notifyApiError(
 ): void {
   const silent401 = opts?.silent401 ?? true;
   if (err instanceof ApiError) {
+    if (err.silent) {
+      return;
+    }
     if (err.status === 401 && silent401) {
       return;
     }
