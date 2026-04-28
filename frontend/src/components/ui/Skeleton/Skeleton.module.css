@@ -1,0 +1,29 @@
+.skeleton {
+  display: block;
+  background: linear-gradient(90deg, var(--color-surface) 0%, var(--color-border) 50%, var(--color-surface) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.rect {
+  border-radius: var(--radius-sm);
+  width: 100%;
+  height: 16px;
+}
+
+.text {
+  border-radius: var(--radius-sm);
+  width: 100%;
+  height: 1em;
+}
+
+.circle {
+  border-radius: var(--radius-pill);
+  width: 32px;
+  height: 32px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
