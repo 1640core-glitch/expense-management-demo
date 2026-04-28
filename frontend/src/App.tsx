@@ -4,6 +4,7 @@ import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
 import ExpenseFormPage from './pages/ExpenseFormPage';
 import MyExpensesPage from './pages/MyExpensesPage';
+import ExpenseDetailPage from './pages/ExpenseDetailPage';
 import ApprovalsListPage from './pages/approvals/ApprovalsListPage';
 import AdminExpensesPage from './pages/AdminExpensesPage';
 import DashboardPage from './pages/DashboardPage';
@@ -37,6 +38,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ExpenseFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/expenses/:id"
+          element={
+            <ProtectedRoute>
+              <ExpenseDetailPage />
             </ProtectedRoute>
           }
         />

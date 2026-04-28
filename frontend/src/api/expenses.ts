@@ -87,6 +87,39 @@ export async function getReceiptBlob(id: number): Promise<Blob> {
   return res.data;
 }
 
+export interface Attachment {
+  id: number | null;
+  expense_id: number;
+  filename: string;
+  path: string;
+  mime_type: string | null;
+  size: number | null;
+  uploaded_by: number;
+  uploaded_at: string;
+  legacy?: boolean;
+}
+
+export async function listAttachments(expenseId: number): Promise<Attachment[]> {
+  const res = await client.get<Attachment[]>(`/expenses/${expenseId}/attachments`);
+  return res.data;
+}
+
+export interface AuditLog {
+  id: number;
+  action: string;
+  actorId: number | null;
+  actorName: string | null;
+  from: string | null;
+  to: string | null;
+  comment: string | null;
+  createdAt: string;
+}
+
+export async function listAuditLogs(expenseId: number): Promise<AuditLog[]> {
+  const res = await client.get<{ logs: AuditLog[] }>(`/expenses/${expenseId}/audit-logs`);
+  return res.data.logs;
+}
+
 export function statusLabel(status: ExpenseStatus): string {
   switch (status) {
     case 'draft': return '下書き';
