@@ -32,6 +32,7 @@ app.use('/api/admin/users', usersRoutes);
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/expenses', approvalsRoutes);
 app.use('/api/reports', reportsRoutes);
+app.use('/api/templates', require('./routes/templates'));
 
 app.use((err, req, res, next) => {
   console.error(err);
