@@ -12,6 +12,7 @@ const usersRoutes = require('./routes/users');
 const categoriesRoutes = require('./routes/categories');
 const approvalsRoutes = require('./routes/approvals');
 const reportsRoutes = require('./routes/reports');
+const notificationsRoutes = require('./routes/notifications');
 
 // Auto-init schema if tables missing
 const schema = fs.readFileSync(path.join(__dirname, 'db/schema.sql'), 'utf8');
@@ -35,6 +36,7 @@ app.use('/api/expenses', approvalsRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/templates', require('./routes/templates'));
 app.use('/api/admin/months-closed', require('./routes/months-closed'));
+app.use('/api/notifications', notificationsRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);
