@@ -1,0 +1,71 @@
+import { useEffect, useState } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import { Sidebar } from './Sidebar';
+import { Topbar } from './Topbar';
+import { useAuth } from '../../context/AuthContext';
+import { listPendingApprovals } from '../../api/approvals';
+import { NavRole } from './nav-items';
+
+export function AppLayout() {
+  const { user } = useAuth();
+  const role = user?.role as NavRole | undefined;
+  const [pendingCount, setPendingCount] = useState<number>(0);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (role !== 'approver' && role !== 'admin') {
+      setPendingCount(0);
+      return;
+    }
+    let cancelled = false;
+    listPendingApprovals()
+      .then((items) => {
+        if (!cancelled) setPendingCount(items.length);
+      })
+      .catch((err) => {
+        console.error('承認待ち件数の取得に失敗しました', err);
+        if (!cancelled) setPendingCount(0);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [role, location.pathname]);
+
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [location.pathname]);
+
+  return (
+    <div className="min-h-screen bg-bg text-text grid lg:grid-cols-[auto_1fr]">
+      <div className="hidden lg:block">
+        <Sidebar role={role} pendingApprovalsCount={pendingCount} variant="fixed" />
+      </div>
+
+      {drawerOpen && (
+        <div className="lg:hidden fixed inset-0 z-40">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setDrawerOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="absolute inset-y-0 left-0 z-50 shadow-lg">
+            <Sidebar
+              role={role}
+              pendingApprovalsCount={pendingCount}
+              variant="drawer"
+              onNavigate={() => setDrawerOpen(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-col min-w-0">
+        <Topbar onOpenDrawer={() => setDrawerOpen(true)} />
+        <main className="flex-1 p-4 sm:p-6">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+}
