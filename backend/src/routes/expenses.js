@@ -169,6 +169,10 @@ router.post('/:id/submit', (req, res) => {
   if (row.status !== 'draft') {
     return res.status(400).json({ error: '下書きのみ提出可能です' });
   }
+  const ym = (row.expense_date || '').slice(0, 7);
+  if (ym && db.prepare('SELECT 1 FROM months_closed WHERE year_month = ?').get(ym)) {
+    return res.status(409).json({ error: 'MONTH_CLOSED' });
+  }
   db.prepare("UPDATE expenses SET status = 'pending', submitted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(row.id);
   const updated = db.prepare('SELECT * FROM expenses WHERE id = ?').get(row.id);
   recordAudit({ expenseId: row.id, actorId: req.user.id, action: 'submit', fromStatus: 'draft', toStatus: 'pending' });
