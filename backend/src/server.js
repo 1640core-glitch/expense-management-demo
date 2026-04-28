@@ -38,6 +38,7 @@ app.use('/api/reports', reportsRoutes);
 app.use('/api/templates', require('./routes/templates'));
 app.use('/api/admin/months-closed', require('./routes/months-closed'));
 app.use('/api/notifications', notificationsRoutes);
+app.use('/api/admin/import', require('./routes/admin-import'));
 
 app.use((err, req, res, next) => {
   console.error(err);
