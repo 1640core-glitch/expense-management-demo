@@ -7,6 +7,7 @@ import MyExpensesPage from './pages/MyExpensesPage';
 import ExpenseDetailPage from './pages/ExpenseDetailPage';
 import ApprovalsListPage from './pages/approvals/ApprovalsListPage';
 import AdminExpensesPage from './pages/AdminExpensesPage';
+import AdminUsersPage from './pages/admin/AdminUsersPage';
 import DashboardPage from './pages/DashboardPage';
 import NotificationsPage from './pages/NotificationsPage';
 import TemplatesListPage from './pages/templates/TemplatesListPage';
@@ -73,6 +74,14 @@ export default function App() {
           element={
             <ProtectedRoute roles={['admin']}>
               <AdminExpensesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute roles={['admin']}>
+              <AdminUsersPage />
             </ProtectedRoute>
           }
         />

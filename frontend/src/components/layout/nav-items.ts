@@ -25,6 +25,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/approvals', label: '承認待ち', icon: ClipboardCheck, roles: ['approver', 'admin'], badgeKey: 'pendingApprovals' },
   { to: '/dashboard', label: 'ダッシュボード', icon: LayoutDashboard, roles: ['approver', 'admin'] },
   { to: '/admin/expenses', label: '経費申請管理', icon: Settings, roles: ['admin'] },
+  { to: '/admin/users', label: 'ユーザー管理', icon: Settings, roles: ['admin'] },
 ];
 
 export function filterNavItemsByRole(role: NavRole | undefined): NavItem[] {
