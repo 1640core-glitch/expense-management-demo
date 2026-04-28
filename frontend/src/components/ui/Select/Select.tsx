@@ -31,6 +31,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       className,
       id,
       children,
+      'aria-describedby': ariaDescribedBy,
       ...rest
     },
     ref,
@@ -38,6 +39,15 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     const generatedId = useId();
     const selectId = id ?? generatedId;
     const isInvalid = invalid || Boolean(errorText);
+    const errorId = `${selectId}-error`;
+    const helpId = `${selectId}-help`;
+    const describedBy = [
+      ariaDescribedBy,
+      errorText ? errorId : null,
+      !errorText && helpText ? helpId : null,
+    ]
+      .filter(Boolean)
+      .join(' ') || undefined;
 
     return (
       <div className={cn(styles.field, wrapperClassName)}>
@@ -50,6 +60,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={selectId}
           aria-invalid={isInvalid || undefined}
+          aria-describedby={describedBy}
+          aria-errormessage={errorText ? errorId : undefined}
           className={cn(styles.select, isInvalid && styles.invalid, className)}
           {...rest}
         >
@@ -67,9 +79,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             : children}
         </select>
         {errorText ? (
-          <span className={styles.error}>{errorText}</span>
+          <span id={errorId} role="alert" className={styles.error}>{errorText}</span>
         ) : helpText ? (
-          <span className={styles.help}>{helpText}</span>
+          <span id={helpId} className={styles.help}>{helpText}</span>
         ) : null}
       </div>
     );

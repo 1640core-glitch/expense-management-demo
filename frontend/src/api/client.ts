@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
-import { normalizeError } from './errors';
+import { ApiError, normalizeError } from './errors';
+import { notifyError, notifyWarning } from '../lib/toast';
 
 export const TOKEN_KEY = 'auth_token';
 
@@ -23,13 +24,21 @@ client.interceptors.response.use(
     if (error.code === 'ERR_CANCELED') {
       return Promise.reject(normalizeError(error));
     }
+    const normalized: ApiError = normalizeError(error);
     if (error.response && error.response.status === 401) {
       localStorage.removeItem(TOKEN_KEY);
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
+    } else if (!normalized.silent) {
+      const status = normalized.status;
+      if (status === 403) {
+        notifyWarning(normalized.message);
+      } else if (status >= 500 && status < 600) {
+        notifyError(normalized.message);
+      }
     }
-    return Promise.reject(normalizeError(error));
+    return Promise.reject(normalized);
   }
 );
 

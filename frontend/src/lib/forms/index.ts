@@ -1,4 +1,4 @@
-export { createResolver, type InferFormValues } from './zodResolver';
+export { createResolver, defaultFormOptions, type InferFormValues } from './zodResolver';
 export {
   requiredString,
   optionalString,

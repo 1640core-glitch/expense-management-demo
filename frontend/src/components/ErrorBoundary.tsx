@@ -33,7 +33,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         return this.props.fallback;
       }
       return (
-        <div role="alert" className="p-6">
+        <div role="alert" aria-live="assertive" aria-atomic="true" className="p-6">
           <h2 className="text-lg font-semibold mb-2">予期しないエラーが発生しました</h2>
           <p className="text-sm text-muted mb-4">
             画面の表示中に問題が発生しました。再読み込みするか、しばらく時間をおいて再度お試しください。
@@ -41,6 +41,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           <button
             type="button"
             onClick={this.handleReset}
+            aria-label="再試行"
             className="px-3 py-1.5 rounded border"
           >
             再試行

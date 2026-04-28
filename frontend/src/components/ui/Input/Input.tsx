@@ -11,10 +11,19 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, helpText, errorText, invalid, wrapperClassName, className, id, ...rest }, ref) => {
+  ({ label, helpText, errorText, invalid, wrapperClassName, className, id, 'aria-describedby': ariaDescribedBy, ...rest }, ref) => {
     const generatedId = useId();
     const inputId = id ?? generatedId;
     const isInvalid = invalid || Boolean(errorText);
+    const errorId = `${inputId}-error`;
+    const helpId = `${inputId}-help`;
+    const describedBy = [
+      ariaDescribedBy,
+      errorText ? errorId : null,
+      !errorText && helpText ? helpId : null,
+    ]
+      .filter(Boolean)
+      .join(' ') || undefined;
 
     return (
       <div className={cn(styles.field, wrapperClassName)}>
@@ -27,13 +36,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           aria-invalid={isInvalid || undefined}
+          aria-describedby={describedBy}
+          aria-errormessage={errorText ? errorId : undefined}
           className={cn(styles.input, isInvalid && styles.invalid, className)}
           {...rest}
         />
         {errorText ? (
-          <span className={styles.error}>{errorText}</span>
+          <span id={errorId} role="alert" className={styles.error}>{errorText}</span>
         ) : helpText ? (
-          <span className={styles.help}>{helpText}</span>
+          <span id={helpId} className={styles.help}>{helpText}</span>
         ) : null}
       </div>
     );
