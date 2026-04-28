@@ -31,6 +31,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expensesRoutes);
 app.use('/api/admin/users', usersRoutes);
 app.use('/api/categories', categoriesRoutes);
+app.use('/api/admin/categories', require('./routes/admin_categories'));
 app.use('/api/expenses', require('./routes/attachments'));
 app.use('/api/expenses', approvalsRoutes);
 app.use('/api/reports', reportsRoutes);
