@@ -1,7 +1,6 @@
 import { ReactNode, forwardRef } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { cn } from '../../../lib/cn';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './Dialog.module.css';
 
 export interface DialogProps {

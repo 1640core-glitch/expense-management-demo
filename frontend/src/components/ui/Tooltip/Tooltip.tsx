@@ -1,7 +1,6 @@
 import { ReactNode, forwardRef } from 'react';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { cn } from '../../../lib/cn';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './Tooltip.module.css';
 
 export interface TooltipProviderProps {

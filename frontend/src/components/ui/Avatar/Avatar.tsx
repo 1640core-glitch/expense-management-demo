@@ -1,6 +1,5 @@
 import { HTMLAttributes, forwardRef, useState } from 'react';
 import { cn } from '../../../lib/cn';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './Avatar.module.css';
 
 export type AvatarSize = 'sm' | 'md' | 'lg';

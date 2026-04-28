@@ -1,6 +1,5 @@
 import { HTMLAttributes, forwardRef } from 'react';
 import { cn } from '../../../lib/cn';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './Badge.module.css';
 
 export type BadgeVariant = 'neutral' | 'primary' | 'success' | 'warning' | 'danger' | 'info';

@@ -1,7 +1,6 @@
 import { ReactNode, forwardRef } from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { cn } from '../../../lib/cn';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './DropdownMenu.module.css';
 
 export interface DropdownMenuProps {

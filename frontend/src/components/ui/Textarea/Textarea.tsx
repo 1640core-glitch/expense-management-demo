@@ -1,6 +1,5 @@
 import { TextareaHTMLAttributes, forwardRef, useId } from 'react';
 import { cn } from '../../../lib/cn';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './Textarea.module.css';
 
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {

@@ -1,7 +1,6 @@
 import { ReactNode, forwardRef } from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { cn } from '../../../lib/cn';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './Tabs.module.css';
 
 export interface TabsProps

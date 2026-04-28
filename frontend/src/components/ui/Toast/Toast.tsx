@@ -1,5 +1,4 @@
 import { Toaster as SonnerToaster, toast as sonnerToast } from 'sonner';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './Toast.module.css';
 
 export interface ToasterProps {

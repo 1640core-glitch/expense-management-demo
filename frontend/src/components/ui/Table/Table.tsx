@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import { cn } from '../../../lib/cn';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './Table.module.css';
 import { TableColumn } from './types';
 

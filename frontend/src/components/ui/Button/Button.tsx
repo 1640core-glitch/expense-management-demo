@@ -1,6 +1,5 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { cn } from '../../../lib/cn';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './Button.module.css';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';

@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { cn } from '../../../lib/cn';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './Pagination.module.css';
 
 export interface PaginationProps {

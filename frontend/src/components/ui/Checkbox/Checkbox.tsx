@@ -1,6 +1,5 @@
 import { InputHTMLAttributes, forwardRef, ReactNode } from 'react';
 import { cn } from '../../../lib/cn';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './Checkbox.module.css';
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {

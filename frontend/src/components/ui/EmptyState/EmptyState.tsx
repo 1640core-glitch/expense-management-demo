@@ -1,6 +1,5 @@
 import { HTMLAttributes, ReactNode, forwardRef } from 'react';
 import { cn } from '../../../lib/cn';
-// @ts-expect-error CSS Modules side-loaded by Vite
 import styles from './EmptyState.module.css';
 
 export interface EmptyStateProps extends HTMLAttributes<HTMLDivElement> {
