@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   Category,
@@ -40,6 +40,8 @@ const STATUS_OPTIONS: { value: ExpenseStatus | ''; label: string }[] = [
 export default function MyExpensesPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const searchQuery = (searchParams.get('q') ?? '').trim().toLowerCase();
   const role = user?.role ?? 'employee';
   const isPrivileged = role === 'approver' || role === 'admin';
 
@@ -79,9 +81,22 @@ export default function MyExpensesPage() {
         if (filters.from && e.expense_date < filters.from) return false;
         if (filters.to && e.expense_date > filters.to) return false;
       }
+      if (searchQuery) {
+        const haystack = [
+          e.title ?? '',
+          e.description ?? '',
+          categoryName(e.category_id),
+          String(e.amount),
+          e.expense_date,
+        ]
+          .join(' ')
+          .toLowerCase();
+        if (!haystack.includes(searchQuery)) return false;
+      }
       return true;
     });
-  }, [expenses, filters, isPrivileged]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expenses, filters, isPrivileged, searchQuery, categories]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -92,7 +107,7 @@ export default function MyExpensesPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [filters]);
+  }, [filters, searchQuery]);
 
   const handleDelete = async (exp: Expense, e: React.MouseEvent) => {
     e.stopPropagation();

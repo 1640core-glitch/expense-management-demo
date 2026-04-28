@@ -1,4 +1,4 @@
-import { Ref } from 'react';
+import { Ref, useState, FormEvent } from 'react';
 import { Bell, Menu, Moon, Search, Sun, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -27,8 +27,17 @@ export function Topbar({ onOpenDrawer, notificationCount = 0, searchInputRef }: 
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const [searchQuery, setSearchQuery] = useState('');
+
   const handleLogout = () => {
     void logout();
+  };
+
+  const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) return;
+    navigate(`/expenses?q=${encodeURIComponent(q)}`);
   };
 
   return (
@@ -43,16 +52,28 @@ export function Topbar({ onOpenDrawer, notificationCount = 0, searchInputRef }: 
         <Menu size={20} />
       </Button>
 
-      <div className="hidden sm:flex items-center flex-1 max-w-md relative">
-        <Search size={16} className="absolute left-3 text-text-muted pointer-events-none" aria-hidden="true" />
+      <form
+        role="search"
+        onSubmit={handleSearchSubmit}
+        className="hidden sm:flex items-center flex-1 max-w-md relative"
+      >
+        <button
+          type="submit"
+          aria-label="検索を実行"
+          className="absolute left-2 top-1/2 -translate-y-1/2 p-1 text-text-muted hover:text-text rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        >
+          <Search size={16} aria-hidden="true" />
+        </button>
         <Input
           ref={searchInputRef}
           type="search"
           placeholder="検索..."
           className="pl-9"
           aria-label="検索"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
-      </div>
+      </form>
 
       <div className="flex-1 sm:hidden" />
 

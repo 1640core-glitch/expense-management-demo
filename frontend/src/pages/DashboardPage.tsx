@@ -12,6 +12,10 @@ import { Badge, BadgeVariant } from '../components/ui/Badge';
 import { Skeleton } from '../components/ui/Skeleton';
 import { Table } from '../components/ui/Table';
 import type { TableColumn } from '../components/ui/Table/types';
+import { Card } from '../components/ui/Card';
+import { Input } from '../components/ui/Input';
+import { Select } from '../components/ui/Select';
+import { Button } from '../components/ui/Button';
 import { notifyApiError } from '../lib/toast';
 
 const STATUS_VARIANTS: Record<ExpenseStatus, BadgeVariant> = {
@@ -139,6 +143,58 @@ export default function DashboardPage() {
     },
   ];
 
+  type ReportRow = {
+    key: string;
+    category_name: string;
+    count: number | null;
+    total: number;
+    isTotal?: boolean;
+  };
+
+  const reportRows: ReportRow[] = useMemo(() => {
+    if (!report) return [];
+    const rows: ReportRow[] = report.categories.map((c) => ({
+      key: `cat-${c.category_id}`,
+      category_name: c.category_name,
+      count: c.count,
+      total: c.total,
+    }));
+    rows.push({
+      key: 'total',
+      category_name: '合計',
+      count: null,
+      total: report.total,
+      isTotal: true,
+    });
+    return rows;
+  }, [report]);
+
+  const reportColumns: TableColumn<ReportRow>[] = [
+    {
+      key: 'category',
+      header: 'カテゴリ',
+      accessor: (row) =>
+        row.isTotal ? <strong>{row.category_name}</strong> : row.category_name,
+    },
+    {
+      key: 'count',
+      header: '件数',
+      align: 'right',
+      accessor: (row) => (row.count === null ? '' : row.count),
+    },
+    {
+      key: 'total',
+      header: '合計金額',
+      align: 'right',
+      accessor: (row) =>
+        row.isTotal ? (
+          <strong>¥{row.total.toLocaleString()}</strong>
+        ) : (
+          `¥${row.total.toLocaleString()}`
+        ),
+    },
+  ];
+
   const recentColumns: TableColumn<Expense>[] = [
     { key: 'date', header: '日付', accessor: (row) => row.expense_date },
     { key: 'category', header: 'カテゴリ', accessor: (row) => `#${row.category_id}` },
@@ -207,105 +263,60 @@ export default function DashboardPage() {
       {isApproverOrAdmin && (
         <section>
           <h2 style={{ fontSize: 18 }}>月次集計（承認済み）</h2>
-          <form
-            onSubmit={onSubmitReport}
-            style={{
-              background: '#fff',
-              padding: 16,
-              borderRadius: 8,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-              marginBottom: 16,
-              display: 'flex',
-              gap: 12,
-              alignItems: 'center',
-              flexWrap: 'wrap',
-            }}
-          >
-            <label>
-              年
-              <input
+          <Card padding="md" style={{ marginBottom: 16 }}>
+            <form
+              onSubmit={onSubmitReport}
+              style={{
+                display: 'flex',
+                gap: 12,
+                alignItems: 'flex-end',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Input
+                label="年"
                 type="number"
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
-                style={{ marginLeft: 6, width: 90 }}
+                wrapperClassName="w-24"
               />
-            </label>
-            <label>
-              月
-              <select
-                value={month}
+              <Select
+                label="月"
+                value={String(month)}
                 onChange={(e) => setMonth(Number(e.target.value))}
-                style={{ marginLeft: 6 }}
+                options={Array.from({ length: 12 }, (_, i) => i + 1).map((m) => ({
+                  value: String(m),
+                  label: String(m),
+                }))}
+              />
+              <Button type="submit" variant="primary">
+                表示
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  void handleDownload();
+                }}
+                disabled={downloading}
               >
-                {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button type="submit">表示</button>
-            <button
-              type="button"
-              onClick={() => {
-                void handleDownload();
-              }}
-              disabled={downloading}
-              style={{ background: '#0ea5e9' }}
-            >
-              {downloading ? 'ダウンロード中...' : 'CSVダウンロード'}
-            </button>
-          </form>
+                {downloading ? 'ダウンロード中...' : 'CSVダウンロード'}
+              </Button>
+            </form>
+          </Card>
           {reportLoading ? (
             <Skeleton height={160} />
           ) : report ? (
-            <div>
+            <>
               <h3 style={{ fontSize: 16 }}>
                 {report.year}年{report.month}月
               </h3>
-              <table
-                style={{
-                  width: '100%',
-                  borderCollapse: 'collapse',
-                  background: '#fff',
-                  borderRadius: 8,
-                  overflow: 'hidden',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                }}
-              >
-                <thead>
-                  <tr style={{ background: '#f1f5f9', textAlign: 'left' }}>
-                    <th style={{ padding: '10px 12px' }}>カテゴリ</th>
-                    <th style={{ padding: '10px 12px', textAlign: 'right' }}>件数</th>
-                    <th style={{ padding: '10px 12px', textAlign: 'right' }}>合計金額</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {report.categories.map((c) => (
-                    <tr key={c.category_id} style={{ borderTop: '1px solid #e5e7eb' }}>
-                      <td style={{ padding: '10px 12px' }}>{c.category_name}</td>
-                      <td style={{ padding: '10px 12px', textAlign: 'right' }}>{c.count}</td>
-                      <td style={{ padding: '10px 12px', textAlign: 'right' }}>
-                        ¥{c.total.toLocaleString()}
-                      </td>
-                    </tr>
-                  ))}
-                  <tr
-                    style={{
-                      borderTop: '2px solid #cbd5e1',
-                      background: '#f8fafc',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    <td style={{ padding: '10px 12px' }}>合計</td>
-                    <td style={{ padding: '10px 12px' }}></td>
-                    <td style={{ padding: '10px 12px', textAlign: 'right' }}>
-                      ¥{report.total.toLocaleString()}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+              <Table
+                columns={reportColumns}
+                data={reportRows}
+                rowKey={(row) => row.key}
+              />
+            </>
           ) : null}
         </section>
       )}
