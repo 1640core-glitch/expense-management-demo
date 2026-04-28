@@ -26,6 +26,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', label: 'ダッシュボード', icon: LayoutDashboard, roles: ['approver', 'admin'] },
   { to: '/admin/expenses', label: '経費申請管理', icon: Settings, roles: ['admin'] },
   { to: '/admin/users', label: 'ユーザー管理', icon: Settings, roles: ['admin'] },
+  { to: '/admin/categories', label: 'カテゴリ管理', icon: Settings, roles: ['admin'] },
 ];
 
 export function filterNavItemsByRole(role: NavRole | undefined): NavItem[] {
