@@ -4,6 +4,56 @@ const { authRequired, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 
+router.get('/summary', authRequired, (req, res) => {
+  const ym = String(req.query.yearMonth || '');
+  const m = /^(\d{4})-(\d{2})$/.exec(ym);
+  if (!m) {
+    return res.status(400).json({ error: 'yearMonth は YYYY-MM 形式で指定してください' });
+  }
+  const year = Number(m[1]);
+  const month = Number(m[2]);
+  if (month < 1 || month > 12) {
+    return res.status(400).json({ error: 'yearMonth の月は 01-12 で指定してください' });
+  }
+  const start = `${m[1]}-${m[2]}-01`;
+  const endY = month === 12 ? year + 1 : year;
+  const endM = month === 12 ? 1 : month + 1;
+  const end = `${endY}-${String(endM).padStart(2, '0')}-01`;
+
+  const isEmployee = req.user.role === 'employee';
+  const params = [start, end];
+  const userFilter = isEmployee ? ' AND e.user_id = ?' : '';
+  if (isEmployee) params.push(req.user.id);
+
+  const byCategory = db.prepare(
+    `SELECT c.id AS categoryId, c.name AS categoryName,
+            COALESCE(SUM(e.amount), 0) AS total, COUNT(e.id) AS count
+     FROM categories c
+     LEFT JOIN expenses e ON e.category_id = c.id
+       AND e.status = 'approved'
+       AND e.expense_date >= ? AND e.expense_date < ?${userFilter}
+     GROUP BY c.id, c.name
+     ORDER BY c.id`
+  ).all(...params);
+
+  const byUserParams = [start, end];
+  const byUserFilter = isEmployee ? ' AND e.user_id = ?' : '';
+  if (isEmployee) byUserParams.push(req.user.id);
+  const byUser = db.prepare(
+    `SELECT u.id AS userId, u.name AS userName,
+            COALESCE(SUM(e.amount), 0) AS total, COUNT(e.id) AS count
+     FROM users u
+     JOIN expenses e ON e.user_id = u.id
+       AND e.status = 'approved'
+       AND e.expense_date >= ? AND e.expense_date < ?${byUserFilter}
+     GROUP BY u.id, u.name
+     ORDER BY u.id`
+  ).all(...byUserParams);
+
+  const total = byCategory.reduce((s, r) => s + r.total, 0);
+  res.json({ yearMonth: ym, byCategory, byUser, total });
+});
+
 router.use(authRequired, requireRole('approver', 'admin'));
 
 function parseYM(req, res) {
