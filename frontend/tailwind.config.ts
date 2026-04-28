@@ -4,6 +4,13 @@ const config: Config = {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   darkMode: ['class', '[data-theme="dark"]'],
   theme: {
+    screens: {
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       colors: {
         bg: 'var(--color-bg)',

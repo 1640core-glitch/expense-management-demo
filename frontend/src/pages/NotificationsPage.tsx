@@ -113,7 +113,7 @@ export default function NotificationsPage() {
 
   return (
     <div style={{ maxWidth: 1080 }}>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
         <h1>通知</h1>
         <Button
           variant="primary"

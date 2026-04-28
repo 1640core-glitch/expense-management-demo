@@ -70,3 +70,14 @@ button:disabled { background: #94a3b8; cursor: not-allowed; }
 .link:hover { text-decoration: underline; }
 nav { display: flex; gap: 16px; padding: 12px 24px; background: #fff; border-bottom: 1px solid #e5e7eb; align-items: center; }
 nav .spacer { flex: 1; }
+
+@media (max-width: 639.98px) {
+  .container { margin: 16px auto; padding: 16px; max-width: 100%; border-radius: 0; box-shadow: none; }
+  .home { margin: 16px auto; padding: 12px; max-width: 100%; }
+  nav { gap: 8px; padding: 8px 12px; flex-wrap: wrap; }
+  table { display: block; width: 100%; overflow-x: auto; }
+}
+
+@media (max-width: 1023.98px) {
+  .home { padding: 16px; }
+}
