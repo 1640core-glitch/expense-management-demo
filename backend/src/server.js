@@ -30,9 +30,11 @@ app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expensesRoutes);
 app.use('/api/admin/users', usersRoutes);
 app.use('/api/categories', categoriesRoutes);
+app.use('/api/expenses', require('./routes/attachments'));
 app.use('/api/expenses', approvalsRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/templates', require('./routes/templates'));
+app.use('/api/admin/months-closed', require('./routes/months-closed'));
 
 app.use((err, req, res, next) => {
   console.error(err);
