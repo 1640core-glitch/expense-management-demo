@@ -3,9 +3,11 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const db = require('../src/db');
+const { runMigrations } = require('./migrate');
 
 const schema = fs.readFileSync(path.join(__dirname, '..', 'src', 'db', 'schema.sql'), 'utf8');
 db.exec(schema);
+runMigrations(db);
 
 const initialCategories = ['交通費', '接待費', '備品', 'その他'];
 const insertCat = db.prepare('INSERT OR IGNORE INTO categories (name) VALUES (?)');

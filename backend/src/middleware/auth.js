@@ -2,6 +2,14 @@ const jwt = require('jsonwebtoken');
 
 const SECRET = process.env.JWT_SECRET || 'change-me-in-production';
 
+const ROLES = Object.freeze({
+  EMPLOYEE: 'employee',
+  APPROVER: 'approver',
+  ACCOUNTING: 'accounting',
+  ADMIN: 'admin',
+});
+const ALL_ROLES = Object.freeze(Object.values(ROLES));
+
 function authRequired(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
@@ -28,4 +36,4 @@ function requireRole(...roles) {
   };
 }
 
-module.exports = { authRequired, signToken, requireRole };
+module.exports = { authRequired, signToken, requireRole, ROLES, ALL_ROLES };

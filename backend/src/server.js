@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const db = require('./db');
+const { runMigrations } = require('../scripts/migrate');
 const authRoutes = require('./routes/auth');
 const expensesRoutes = require('./routes/expenses');
 const usersRoutes = require('./routes/users');
@@ -15,6 +16,7 @@ const reportsRoutes = require('./routes/reports');
 // Auto-init schema if tables missing
 const schema = fs.readFileSync(path.join(__dirname, 'db/schema.sql'), 'utf8');
 db.exec(schema);
+runMigrations(db);
 const initialCategories = ['交通費', '接待費', '備品', 'その他'];
 const insertCat = db.prepare('INSERT OR IGNORE INTO categories (name) VALUES (?)');
 for (const n of initialCategories) insertCat.run(n);
