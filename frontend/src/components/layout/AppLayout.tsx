@@ -6,6 +6,7 @@ import { Toaster } from '../ui/Toast/Toast';
 import { useAuth } from '../../context/AuthContext';
 import { listPendingApprovals } from '../../api/approvals';
 import { NavRole } from './nav-items';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 export function AppLayout() {
   const { user } = useAuth();
@@ -64,7 +65,9 @@ export function AppLayout() {
       <div className="flex flex-col min-w-0">
         <Topbar onOpenDrawer={() => setDrawerOpen(true)} />
         <main className="flex-1 p-4 sm:p-6">
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </div>
       <Toaster position="top-right" richColors />
