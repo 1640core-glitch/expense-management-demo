@@ -9,6 +9,7 @@ import ApprovalsListPage from './pages/approvals/ApprovalsListPage';
 import AdminExpensesPage from './pages/AdminExpensesPage';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
 import AdminCategoriesPage from './pages/admin/AdminCategoriesPage';
+import AdminImportPage from './pages/admin/AdminImportPage';
 import DashboardPage from './pages/DashboardPage';
 import NotificationsPage from './pages/NotificationsPage';
 import TemplatesListPage from './pages/templates/TemplatesListPage';
@@ -91,6 +92,14 @@ export default function App() {
           element={
             <ProtectedRoute roles={['admin']}>
               <AdminCategoriesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/import"
+          element={
+            <ProtectedRoute roles={['admin']}>
+              <AdminImportPage />
             </ProtectedRoute>
           }
         />

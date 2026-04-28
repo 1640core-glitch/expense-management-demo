@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   Settings,
   FileText,
+  Upload,
   LucideIcon,
 } from 'lucide-react';
 
@@ -27,6 +28,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/admin/expenses', label: '経費申請管理', icon: Settings, roles: ['admin'] },
   { to: '/admin/users', label: 'ユーザー管理', icon: Settings, roles: ['admin'] },
   { to: '/admin/categories', label: 'カテゴリ管理', icon: Settings, roles: ['admin'] },
+  { to: '/admin/import', label: 'CSVインポート', icon: Upload, roles: ['admin'] },
 ];
 
 export function filterNavItemsByRole(role: NavRole | undefined): NavItem[] {
