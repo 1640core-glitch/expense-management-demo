@@ -18,7 +18,32 @@ const storage = multer.diskStorage({
     cb(null, base + ext);
   },
 });
-const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
+const fileFilter = (req, file, cb) => {
+  if (allowedMimeTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    const err = new Error('許可されていないファイル形式です。JPEG/PNG/GIF/WebP/PDF のみアップロード可能です。');
+    err.code = 'INVALID_FILE_TYPE';
+    cb(err);
+  }
+};
+const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 }, fileFilter });
+
+const handleUpload = (field) => (req, res, next) => {
+  upload.single(field)(req, res, (err) => {
+    if (err) {
+      if (err.code === 'INVALID_FILE_TYPE') {
+        return res.status(400).json({ error: err.message });
+      }
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ error: 'ファイルサイズが上限を超えています。' });
+      }
+      return res.status(400).json({ error: 'ファイルのアップロードに失敗しました。' });
+    }
+    next();
+  });
+};
 
 router.use(authRequired);
 
@@ -35,7 +60,7 @@ router.get('/', (req, res) => {
   res.json(rows);
 });
 
-router.post('/', upload.single('receipt'), (req, res) => {
+router.post('/', handleUpload('receipt'), (req, res) => {
   const { category_id, title, amount, expense_date, description } = req.body || {};
   if (!category_id || !amount || !expense_date) {
     return res.status(400).json({ error: 'category_id, amount, expense_date は必須です' });
@@ -68,7 +93,7 @@ router.get('/:id', (req, res) => {
   res.json(row);
 });
 
-router.patch('/:id', upload.single('receipt'), (req, res) => {
+router.patch('/:id', handleUpload('receipt'), (req, res) => {
   const row = getOwnedExpense(req, res);
   if (!row) return;
   if (row.status !== 'draft') {
