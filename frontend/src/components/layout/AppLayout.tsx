@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { Toaster } from '../ui/Toast/Toast';
 import { useAuth } from '../../context/AuthContext';
 import { listPendingApprovals } from '../../api/approvals';
 import { NavRole } from './nav-items';
@@ -66,6 +67,7 @@ export function AppLayout() {
           <Outlet />
         </main>
       </div>
+      <Toaster position="top-right" richColors />
     </div>
   );
 }
