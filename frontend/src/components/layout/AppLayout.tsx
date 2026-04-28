@@ -5,13 +5,17 @@ import { Topbar } from './Topbar';
 import { Toaster } from '../ui/Toast/Toast';
 import { useAuth } from '../../context/AuthContext';
 import { listPendingApprovals } from '../../api/approvals';
+import { listNotifications } from '../../api/notifications';
 import { NavRole } from './nav-items';
 import { ErrorBoundary } from '../ErrorBoundary';
+
+const NOTIFICATION_POLL_INTERVAL_MS = 60_000;
 
 export function AppLayout() {
   const { user } = useAuth();
   const role = user?.role as NavRole | undefined;
   const [pendingCount, setPendingCount] = useState<number>(0);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const location = useLocation();
 
@@ -38,6 +42,56 @@ export function AppLayout() {
     setDrawerOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (!user) {
+      setUnreadCount(0);
+      return;
+    }
+    const controller = new AbortController();
+    let timer: ReturnType<typeof setInterval> | null = null;
+
+    const fetchUnread = () => {
+      listNotifications(controller.signal)
+        .then((items) => {
+          setUnreadCount(items.filter((n) => n.read_at === null).length);
+        })
+        .catch((err) => {
+          if (controller.signal.aborted) return;
+          console.error('通知件数の取得に失敗しました', err);
+        });
+    };
+
+    const start = () => {
+      if (timer !== null) return;
+      fetchUnread();
+      timer = setInterval(fetchUnread, NOTIFICATION_POLL_INTERVAL_MS);
+    };
+    const stop = () => {
+      if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        start();
+      } else {
+        stop();
+      }
+    };
+
+    if (document.visibilityState === 'visible') {
+      start();
+    }
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      stop();
+      controller.abort();
+    };
+  }, [user, location.pathname]);
+
   return (
     <div className="min-h-screen bg-bg text-text grid lg:grid-cols-[auto_1fr]">
       <div className="hidden lg:block">
@@ -63,7 +117,7 @@ export function AppLayout() {
       )}
 
       <div className="flex flex-col min-w-0">
-        <Topbar onOpenDrawer={() => setDrawerOpen(true)} />
+        <Topbar onOpenDrawer={() => setDrawerOpen(true)} notificationCount={unreadCount} />
         <main className="flex-1 p-4 sm:p-6">
           <ErrorBoundary>
             <Outlet />

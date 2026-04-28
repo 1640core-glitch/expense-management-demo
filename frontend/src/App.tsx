@@ -8,6 +8,7 @@ import ExpenseDetailPage from './pages/ExpenseDetailPage';
 import ApprovalsListPage from './pages/approvals/ApprovalsListPage';
 import AdminExpensesPage from './pages/AdminExpensesPage';
 import DashboardPage from './pages/DashboardPage';
+import NotificationsPage from './pages/NotificationsPage';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { AppLayout } from './components/layout/AppLayout';
 
@@ -78,6 +79,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationsPage />
             </ProtectedRoute>
           }
         />

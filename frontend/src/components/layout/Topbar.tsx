@@ -1,4 +1,5 @@
 import { Bell, Menu, Moon, Search, Sun, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
   Badge,
@@ -22,6 +23,7 @@ export interface TopbarProps {
 export function Topbar({ onOpenDrawer, notificationCount = 0 }: TopbarProps) {
   const { resolved, toggle } = useTheme();
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     void logout();
@@ -60,7 +62,13 @@ export function Topbar({ onOpenDrawer, notificationCount = 0 }: TopbarProps) {
         {resolved === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
       </Button>
 
-      <Button variant="ghost" size="sm" aria-label="通知" className="relative">
+      <Button
+        variant="ghost"
+        size="sm"
+        aria-label="通知"
+        className="relative"
+        onClick={() => navigate('/notifications')}
+      >
         <Bell size={18} />
         {notificationCount > 0 && (
           <Badge variant="danger" size="sm" className="absolute -top-1 -right-1">
