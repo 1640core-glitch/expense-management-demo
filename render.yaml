@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: expense-management
+    runtime: node
+    plan: free
+    buildCommand: npm run render-build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: DB_PATH
+        value: /tmp/expense.db
+      - key: UPLOAD_DIR
+        value: /tmp/uploads

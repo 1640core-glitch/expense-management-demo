@@ -41,6 +41,16 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/admin/import', require('./routes/admin-import'));
 app.use('/api/exports', require('./routes/exports'));
 
+// Serve built frontend (production deploy). In dev `frontend/dist` does not exist,
+// so this block no-ops and Vite handles the frontend on a separate port.
+const distPath = path.join(__dirname, '..', '..', 'frontend', 'dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get(/^\/(?!api\/).*/, (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ error: 'サーバーエラーが発生しました' });

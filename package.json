@@ -1,0 +1,12 @@
+{
+  "name": "expense-management",
+  "private": true,
+  "version": "0.1.0",
+  "engines": {
+    "node": "20.x"
+  },
+  "scripts": {
+    "render-build": "cd backend && npm install && cd ../frontend && npm install && npm run build && cd ../backend && npm run seed",
+    "start": "cd backend && npm start"
+  }
+}
