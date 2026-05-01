@@ -14,10 +14,9 @@ const insertCat = db.prepare('INSERT OR IGNORE INTO categories (name) VALUES (?)
 for (const n of initialCategories) insertCat.run(n);
 
 const users = [
-  { email: 'admin@example.com',      password: 'admin1234',      name: '管理者', role: 'admin' },
-  { email: 'approver@example.com',   password: 'approver1234',   name: '承認者', role: 'approver' },
-  { email: 'accounting@example.com', password: 'accounting1234', name: '経理',   role: 'accounting' },
-  { email: 'applicant@example.com',  password: 'applicant1234',  name: '申請者', role: 'employee' },
+  { email: 'admin@example.com',     password: 'admin1234',     name: '管理者', role: 'admin' },
+  { email: 'approver@example.com',  password: 'approver1234',  name: '承認者', role: 'approver' },
+  { email: 'applicant@example.com', password: 'applicant1234', name: '申請者', role: 'employee' },
 ];
 
 const upsert = db.prepare(

@@ -3,10 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const DEMO_ACCOUNTS = [
-  { label: '管理者', email: 'admin@example.com',      password: 'admin1234' },
-  { label: '承認者', email: 'approver@example.com',   password: 'approver1234' },
-  { label: '経理',   email: 'accounting@example.com', password: 'accounting1234' },
-  { label: '申請者', email: 'applicant@example.com',  password: 'applicant1234' },
+  { label: '管理者', email: 'admin@example.com',     password: 'admin1234' },
+  { label: '承認者', email: 'approver@example.com',  password: 'approver1234' },
+  { label: '申請者', email: 'applicant@example.com', password: 'applicant1234' },
 ];
 
 export default function LoginPage() {
