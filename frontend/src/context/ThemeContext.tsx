@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useState, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useLayoutEffect, ReactNode } from 'react';
 
 type Mode = 'light' | 'dark' | 'system';
 type Resolved = 'light' | 'dark';
@@ -14,68 +14,26 @@ const STORAGE_KEY = 'theme';
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-const getSystemResolved = (): Resolved => {
-  if (typeof window === 'undefined' || !window.matchMedia) return 'light';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-};
-
-const getInitialMode = (): Mode => {
-  if (typeof window === 'undefined') return 'system';
-  try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === 'light' || stored === 'dark') return stored;
-  } catch {
-    // ignore
-  }
-  return 'system';
-};
-
-const computeResolved = (mode: Mode): Resolved => {
-  if (mode === 'system') return getSystemResolved();
-  return mode;
-};
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [mode, setModeState] = useState<Mode>(getInitialMode);
-  const [resolved, setResolved] = useState<Resolved>(() => computeResolved(getInitialMode()));
-
   useLayoutEffect(() => {
-    const next = computeResolved(mode);
-    setResolved(next);
-    document.documentElement.dataset.theme = next;
-  }, [mode]);
-
-  useEffect(() => {
-    if (mode !== 'system') return;
-    const mql = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = () => {
-      const next: Resolved = mql.matches ? 'dark' : 'light';
-      setResolved(next);
-      document.documentElement.dataset.theme = next;
-    };
-    mql.addEventListener('change', onChange);
-    return () => mql.removeEventListener('change', onChange);
-  }, [mode]);
-
-  const setMode = useCallback((next: Mode) => {
+    document.documentElement.dataset.theme = 'light';
     try {
-      if (next === 'system') {
-        window.localStorage.removeItem(STORAGE_KEY);
-      } else {
-        window.localStorage.setItem(STORAGE_KEY, next);
-      }
+      window.localStorage.removeItem(STORAGE_KEY);
     } catch {
       // ignore
     }
-    setModeState(next);
+  }, []);
+
+  const setMode = useCallback((_next: Mode) => {
+    // light mode only
   }, []);
 
   const toggle = useCallback(() => {
-    setMode(resolved === 'dark' ? 'light' : 'dark');
-  }, [resolved, setMode]);
+    // light mode only
+  }, []);
 
   return (
-    <ThemeContext.Provider value={{ mode, resolved, setMode, toggle }}>
+    <ThemeContext.Provider value={{ mode: 'light', resolved: 'light', setMode, toggle }}>
       {children}
     </ThemeContext.Provider>
   );

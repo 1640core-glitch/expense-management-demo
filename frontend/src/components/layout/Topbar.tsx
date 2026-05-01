@@ -1,5 +1,5 @@
 import { Ref, useState, FormEvent } from 'react';
-import { Bell, Menu, Moon, Search, Sun, LogOut } from 'lucide-react';
+import { Bell, Menu, Search, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
@@ -13,7 +13,6 @@ import {
   DropdownMenuTrigger,
   Input,
 } from '../ui';
-import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 
 export interface TopbarProps {
@@ -23,7 +22,6 @@ export interface TopbarProps {
 }
 
 export function Topbar({ onOpenDrawer, notificationCount = 0, searchInputRef }: TopbarProps) {
-  const { resolved, toggle } = useTheme();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -76,15 +74,6 @@ export function Topbar({ onOpenDrawer, notificationCount = 0, searchInputRef }: 
       </form>
 
       <div className="flex-1 sm:hidden" />
-
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={toggle}
-        aria-label={resolved === 'dark' ? 'ライトモードに切替' : 'ダークモードに切替'}
-      >
-        {resolved === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-      </Button>
 
       <Button
         variant="ghost"
