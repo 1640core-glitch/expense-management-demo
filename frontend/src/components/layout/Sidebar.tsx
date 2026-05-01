@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '../ui';
 import { cn } from '../../lib/cn';
+import { useAuth } from '../../context/AuthContext';
 import { filterNavItemsByRole, NavRole } from './nav-items';
 
 const COLLAPSE_KEY = 'sidebar:collapsed';
@@ -15,6 +16,8 @@ export interface SidebarProps {
 }
 
 export function Sidebar({ role, pendingApprovalsCount = 0, variant = 'fixed', onNavigate }: SidebarProps) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     if (variant === 'drawer') return false;
     try {
@@ -23,6 +26,12 @@ export function Sidebar({ role, pendingApprovalsCount = 0, variant = 'fixed', on
       return false;
     }
   });
+
+  const handleLogout = async () => {
+    onNavigate?.();
+    await logout();
+    navigate('/login', { replace: true });
+  };
 
   useEffect(() => {
     if (variant === 'drawer') return;
@@ -45,8 +54,17 @@ export function Sidebar({ role, pendingApprovalsCount = 0, variant = 'fixed', on
       aria-label="メインナビゲーション"
     >
       <div className={cn('flex items-center gap-2 px-4 h-14 border-b border-border', isCollapsed && 'justify-center px-2')}>
-        {!isCollapsed && <strong className="text-text text-lg whitespace-nowrap">経費精算</strong>}
-        {isCollapsed && <strong className="text-text text-lg">経</strong>}
+        <button
+          type="button"
+          onClick={() => void handleLogout()}
+          className={cn(
+            'text-text text-lg font-bold whitespace-nowrap rounded-md px-1 hover:text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+          )}
+          aria-label="ログアウト"
+          title="クリックでログアウト"
+        >
+          {isCollapsed ? '経' : '経費精算'}
+        </button>
       </div>
 
       <nav className="flex-1 overflow-y-auto py-2">

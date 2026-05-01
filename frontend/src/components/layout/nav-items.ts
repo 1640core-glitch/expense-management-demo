@@ -24,7 +24,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/expenses', label: '自分の申請', icon: ListChecks, roles: ['employee', 'approver', 'admin'] },
   { to: '/templates', label: 'テンプレート', icon: FileText, roles: ['employee', 'approver', 'admin'] },
   { to: '/approvals', label: '承認待ち', icon: ClipboardCheck, roles: ['approver', 'admin'], badgeKey: 'pendingApprovals' },
-  { to: '/dashboard', label: 'ダッシュボード', icon: LayoutDashboard, roles: ['approver', 'admin'] },
+  { to: '/dashboard', label: 'ダッシュボード', icon: LayoutDashboard, roles: ['employee', 'approver', 'admin'] },
   { to: '/admin/expenses', label: '経費申請管理', icon: Settings, roles: ['admin'] },
   { to: '/admin/users', label: 'ユーザー管理', icon: Settings, roles: ['admin'] },
   { to: '/admin/categories', label: 'カテゴリ管理', icon: Settings, roles: ['admin'] },
