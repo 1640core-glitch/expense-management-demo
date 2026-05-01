@@ -57,11 +57,11 @@ html, body { background: var(--color-bg); color: var(--color-text); }
 
 * { box-sizing: border-box; }
 body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif; }
-.container { max-width: 480px; margin: 48px auto; padding: 24px; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.container { max-width: 480px; margin: 48px auto; padding: 24px; background: #fff; color: #1a1f2c; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
 .home { max-width: 960px; margin: 32px auto; padding: 24px; }
 h1 { font-size: 22px; margin-top: 0; }
 label { display: block; margin-bottom: 4px; font-size: 14px; }
-input { width: 100%; padding: 8px 10px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+input { width: 100%; padding: 8px 10px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; background: #fff; color: #1a1f2c; }
 button { padding: 8px 16px; background: #2563eb; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
 button:hover { background: #1d4ed8; }
 button:disabled { background: #94a3b8; cursor: not-allowed; }
