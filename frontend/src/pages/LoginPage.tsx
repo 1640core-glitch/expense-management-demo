@@ -32,28 +32,53 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="container">
-      <h1>ログイン</h1>
-
-      <p style={{ fontSize: 13, color: '#6b7280', marginTop: 0, marginBottom: 16, lineHeight: 1.6 }}>
-        ※ デモサイトのため、ログイン画面は省略しております。<br />
-        下記からロールを選択するとそのままログインできます。
+    <div>
+      <h1
+        style={{
+          textAlign: 'center',
+          fontSize: 28,
+          fontWeight: 700,
+          color: '#1a1f2c',
+          margin: '48px 16px 8px',
+          letterSpacing: '0.02em',
+        }}
+      >
+        経費精算管理システム
+      </h1>
+      <p
+        style={{
+          textAlign: 'center',
+          fontSize: 13,
+          color: '#6b7280',
+          margin: '0 16px 24px',
+        }}
+      >
+        Expense Management System
       </p>
 
-      {error && <div className="error">{error}</div>}
+      <div className="container" style={{ marginTop: 0 }}>
+        <h2 style={{ fontSize: 18, marginTop: 0, marginBottom: 12 }}>ログイン</h2>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {DEMO_ACCOUNTS.map((acc) => (
-          <button
-            key={acc.email}
-            type="button"
-            onClick={() => void onDemoLogin(acc)}
-            disabled={submitting}
-            style={{ width: '100%' }}
-          >
-            {submitting ? '送信中...' : `${acc.label} としてログイン`}
-          </button>
-        ))}
+        <p style={{ fontSize: 13, color: '#6b7280', marginTop: 0, marginBottom: 16, lineHeight: 1.6 }}>
+          ※ デモサイトのため、ログイン画面は省略しております。<br />
+          下記からロールを選択するとそのままログインできます。
+        </p>
+
+        {error && <div className="error">{error}</div>}
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {DEMO_ACCOUNTS.map((acc) => (
+            <button
+              key={acc.email}
+              type="button"
+              onClick={() => void onDemoLogin(acc)}
+              disabled={submitting}
+              style={{ width: '100%' }}
+            >
+              {submitting ? '送信中...' : `${acc.label} としてログイン`}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
