@@ -1,5 +1,5 @@
-import { FormEvent, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const DEMO_ACCOUNTS = [
@@ -11,16 +11,14 @@ const DEMO_ACCOUNTS = [
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const performLogin = async (loginEmail: string, loginPassword: string) => {
+  const onDemoLogin = async (acc: (typeof DEMO_ACCOUNTS)[number]) => {
     setError(null);
     setSubmitting(true);
     try {
-      await login(loginEmail, loginPassword);
+      await login(acc.email, acc.password);
       navigate('/', { replace: true });
     } catch (err: unknown) {
       console.error('ログインに失敗しました', err);
@@ -33,53 +31,30 @@ export default function LoginPage() {
     }
   };
 
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    void performLogin(email, password);
-  };
-
-  const onDemoLogin = (acc: (typeof DEMO_ACCOUNTS)[number]) => {
-    setEmail(acc.email);
-    setPassword(acc.password);
-    void performLogin(acc.email, acc.password);
-  };
-
   return (
     <div className="container">
       <h1>ログイン</h1>
+
+      <p style={{ fontSize: 13, color: '#6b7280', marginTop: 0, marginBottom: 16, lineHeight: 1.6 }}>
+        ※ デモサイトのため、ログイン画面は省略しております。<br />
+        下記からロールを選択するとそのままログインできます。
+      </p>
+
       {error && <div className="error">{error}</div>}
 
-      <div style={{ marginBottom: 20 }}>
-        <p style={{ fontSize: 14, marginBottom: 8 }}>ロールを選んでログイン:</p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {DEMO_ACCOUNTS.map((acc) => (
-            <button
-              key={acc.email}
-              type="button"
-              onClick={() => onDemoLogin(acc)}
-              disabled={submitting}
-              style={{ flex: '1 1 calc(50% - 4px)', minWidth: 120 }}
-            >
-              {acc.label}
-            </button>
-          ))}
-        </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {DEMO_ACCOUNTS.map((acc) => (
+          <button
+            key={acc.email}
+            type="button"
+            onClick={() => void onDemoLogin(acc)}
+            disabled={submitting}
+            style={{ width: '100%' }}
+          >
+            {submitting ? '送信中...' : `${acc.label} としてログイン`}
+          </button>
+        ))}
       </div>
-
-      <hr style={{ border: 'none', borderTop: '1px solid #e5e7eb', margin: '16px 0' }} />
-
-      <form onSubmit={onSubmit}>
-        <label>メールアドレス</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <label>パスワード</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button type="submit" disabled={submitting}>
-          {submitting ? '送信中...' : 'ログイン'}
-        </button>
-      </form>
-      <p style={{ marginTop: 16, fontSize: 14 }}>
-        アカウントをお持ちでない方は <Link className="link" to="/register">新規登録</Link>
-      </p>
     </div>
   );
 }
